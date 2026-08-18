@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain-Based Inventory Management</title>
+    <meta name="description" content="Cryptographic ledger and proof-of-work stock audit tracking application for supply chain security.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Card Wrapper -->
+        <main class="main-card">
+            <!-- Header Banner -->
+            <header class="header-banner">
+                <div class="header-title-container">
+                    <span class="header-icon">🔗</span>
+                    <h1 class="header-title">Blockchain-Based Inventory Management</h1>
+                </div>
+                <p class="header-subtitle">SHA-256 Hashing • Previous Hash • Nonce • Tamper Detection</p>
+            </header>
+
+            <!-- Control & Action Section -->
+            <section class="controls-section">
+                <!-- Transaction Input Field -->
+                <div class="form-group">
+                    <label for="transactionInput" class="form-label">Data / Inventory Transaction</label>
+                    <input 
+                        type="text" 
+                        id="transactionInput" 
+                        class="form-input" 
+                        placeholder="Enter item SKU, quantity, or transfer details..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Mining Difficulty Selector -->
+                <div class="form-group">
+                    <label for="difficultySelect" class="form-label">Mining Difficulty</label>
+                    <div class="select-wrapper">
+                        <select id="difficultySelect" class="form-select">
+                            <option value="1">1 - Very Easy (1 zero)</option>
+                            <option value="2">2 - Easy (2 zeros)</option>
+                            <option value="3" selected>3 - Medium</option>
+                            <option value="4">4 - Hard (4 zeros)</option>
+                            <option value="5">5 - Extreme (5 zeros)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Button Toolbar -->
+                <div class="button-toolbar">
+                    <button id="btnGenerate" class="btn btn-purple">
+                        <span class="btn-icon">⚡</span> Generate Hash
+                    </button>
+                    <button id="btnVerify" class="btn btn-green">
+                        <span class="btn-icon">✓</span> Verify Chain
+                    </button>
+                    <button id="btnTamperModal" class="btn btn-red">
+                        <span class="btn-icon">⚠</span> Tamper Record
+                    </button>
+                    <button id="btnReset" class="btn btn-cyan">
+                        <span class="btn-icon">🔄</span> Reset Data
+                    </button>
+                    <button id="btnClear" class="btn btn-grey">
+                        <span class="btn-icon">🗑️</span> Clear
+                    </button>
+                </div>
+            </section>
+
+            <!-- Status Alert Banner -->
+            <div id="statusContainer" class="status-container">
+                <div id="statusBadge" class="status-badge status-success">
+                    <span class="status-dot">●</span>
+                    <span id="statusText">Hash Generation Successful</span>
+                </div>
+            </div>
+
+            <!-- Verification Results Summary (Hidden by default, shown on verify/tamper) -->
+            <div id="auditReport" class="audit-report hidden">
+                <div id="auditHeader" class="audit-header valid">
+                    <span class="audit-status-badge" id="auditBadgeText">INVENTORY VALID</span>
+                    <p id="auditDetailsText" class="audit-details">All cryptographic hashes, timestamps, and sequence links match perfectly across all blocks.</p>
+                </div>
+            </div>
+
+            <!-- Blockchain Records Table Section -->
+            <section class="table-section">
+                <div class="table-title-container">
+                    <span class="table-icon">⛓</span>
+                    <h2 class="table-title">Inventory Blockchain Records</h2>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="blockchain-table" id="blockchainTable">
+                        <thead>
+                            <tr>
+                                <th class="col-index">#</th>
+                                <th class="col-data">Data (Item Details)</th>
+                                <th class="col-hash">Previous Hash</th>
+                                <th class="col-nonce">Nonce</th>
+                                <th class="col-hash">SHA-256 Hash</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Block Rows Rendered Dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer / Metadata Info -->
+        <footer class="app-footer">
+            <p>Developed for Supply Chain Product Movement & Stock Audit Verification • Proof of Work Engine</p>
+        </footer>
+    </div>
+
+    <!-- Interactive Tamper Modal -->
+    <div id="tamperModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚠️ Tamper Ledger Record</h3>
+                <button id="btnCloseTamperModal" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Select an existing block and falsify its data to simulate unauthorized tampering. This will alter the block's hash and break the cryptographic chain.</p>
+                
+                <div class="form-group">
+                    <label for="tamperBlockSelect" class="form-label">Select Block Index (#)</label>
+                    <select id="tamperBlockSelect" class="form-select">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tamperDataInput" class="form-label">Modified Transaction Data</label>
+                    <input type="text" id="tamperDataInput" class="form-input" placeholder="e.g. Kushall: SKU-101 (+500 Units Falsified)">
+                </div>
+
+                <div class="tamper-warning-box">
+                    <strong>Impact:</strong> Modifying historical data will invalidate all subsequent blocks in the chain during auditing.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnApplyTamper" class="btn btn-red">Inject Tampered Data</button>
+                <button id="btnCancelTamper" class="btn btn-grey">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
