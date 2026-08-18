@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: blockchain-inventory-management
+    env: static
+    buildCommand: ""
+    staticPublishPath: ./
