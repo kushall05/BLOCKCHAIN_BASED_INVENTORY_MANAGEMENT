@@ -1,0 +1,2 @@
+# Blockchain Inventory Management Requirements
+# Uses Python standard libraries (http.server, hashlib, json, time, os)
